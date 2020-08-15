@@ -1,5 +1,10 @@
 open Webapi.Dom
 
+type project = {
+  name: string;
+  goal: int;
+  achieved: int
+}
 
 let project (name, goal, achieved, action) =
   let e = document |> Document.createElement "tr" in
@@ -19,16 +24,29 @@ let unwrap = function
   | Some(v) -> v
   | None -> raise (Invalid_argument "unwrap received None")
 
-let init () =
+let update_projects json =
+  let decode_project json =
+    {
+      name = Json.Decode.(field "Name" string json);
+      goal = Json.Decode.(field "Goal" int json);
+      achieved = Json.Decode.(field "Achieved" int json)
+    } in
+  let decode_project_list json =
+    Json.Decode.(list decode_project json) in
   let e =
-    document
-    |> Document.querySelector "#projects tbody"
+    Document.querySelector "#projects tbody" document
     |> unwrap in
-  [("first", "1000", "80", "start")
-  ;("second", "700", "0", "start")
-  ;("third", "5500", "2800", "stop")]
-  |> List.map project
+  decode_project_list json
+  |> List.map (fun p -> project (p.name, (string_of_int p.goal), (string_of_int p.achieved), "Stop"))
   |> List.iter (fun c -> Element.appendChild c e)
+
+let init () =
+  Js.Promise.(
+    Fetch.fetch "/projects"
+    |> then_ Fetch.Response.json
+    |> then_ (fun json -> update_projects json |> resolve)
+    |> ignore
+  )
 
 let () =
   Js.log "Hello, BuckleScript and Reason!";
