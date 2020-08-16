@@ -19,17 +19,16 @@ module Decode = struct
 end
 
 let project (name, goal, achieved, action) =
-  let e = document |> Document.createElement "tr" in
-  let e_name = document |> Document.createElement "td"
-  and e_goal = document |> Document.createElement "td"
-  and e_achieved = document |> Document.createElement "td"
-  and e_action = document |> Document.createElement "td" in
+  let e = Document.createElement "tr" document
+  and e_name = Document.createElement "td" document
+  and e_goal = Document.createElement "td" document
+  and e_achieved = Document.createElement "td" document
+  and e_action = Document.createElement "td" document in
   Element.setTextContent e_name name;
   Element.setTextContent e_goal goal;
   Element.setTextContent e_achieved achieved;
   Element.setTextContent e_action action;
-  List.iter (fun c -> Element.appendChild c e)
-    [e_name; e_goal; e_achieved; e_action];
+  List.iter (fun c -> Element.appendChild c e) [e_name; e_goal; e_achieved; e_action];
   e
 
 let unwrap = function
