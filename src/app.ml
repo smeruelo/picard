@@ -6,6 +6,18 @@ type project = {
   achieved: int
 }
 
+module Decode = struct
+  let project json =
+    {
+      name = Json.Decode.(field "Name" string json);
+      goal = Json.Decode.(field "Goal" int json);
+      achieved = Json.Decode.(field "Achieved" int json)
+    }
+
+  let project_list json =
+    Json.Decode.(list project json)
+end
+
 let project (name, goal, achieved, action) =
   let e = document |> Document.createElement "tr" in
   let e_name = document |> Document.createElement "td"
@@ -25,18 +37,10 @@ let unwrap = function
   | None -> raise (Invalid_argument "unwrap received None")
 
 let update_projects json =
-  let decode_project json =
-    {
-      name = Json.Decode.(field "Name" string json);
-      goal = Json.Decode.(field "Goal" int json);
-      achieved = Json.Decode.(field "Achieved" int json)
-    } in
-  let decode_project_list json =
-    Json.Decode.(list decode_project json) in
   let e =
     Document.querySelector "#projects tbody" document
     |> unwrap in
-  decode_project_list json
+  Decode.project_list json
   |> List.map (fun p -> project (p.name, (string_of_int p.goal), (string_of_int p.achieved), "Stop"))
   |> List.iter (fun c -> Element.appendChild c e)
 
