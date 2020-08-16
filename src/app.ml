@@ -48,6 +48,7 @@ let init () =
     Fetch.fetch "/projects"
     |> then_ Fetch.Response.json
     |> then_ (fun json -> update_projects json |> resolve)
+    |> catch (fun err -> Js.log err |> resolve)
     |> ignore
   )
 
