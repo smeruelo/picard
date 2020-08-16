@@ -1,5 +1,5 @@
 # picard
-__picard__ is a front-end for [glow](https://github.com/smeruelo/glow), written in OCaml and compiled to javascript using [https://bucklescript.github.io/](Bucklescript).
+Front-end for [glow](https://github.com/smeruelo/glow), written in OCaml and transpiled to javascript using [Bucklescript](https://bucklescript.github.io/).
 
 ## Build
 ```bash
